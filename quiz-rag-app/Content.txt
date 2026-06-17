@@ -1,0 +1,136 @@
+### Project Overview
+
+This project is a highly specialized, lightweight **Retrieval-Augmented Generation (RAG)** application designed to transform static study materials (like textbook chapters, lecture notes, or lab manuals) into dynamic, interactive learning modules.
+
+Instead of creating generic quizzes, the core feature of this platform is its **Curated Prompt Style Engine**. It provides a front-end matrix that shifts the underlying persona, tone, structural constraints, and assessment logic of the AI model. With a single click, a student can shift the same exact textbook fact between an academic exam simulator, a practical coding interview setup, an intuitive analogy-driven tutor, or an immersive text-based gaming experience.
+
+---
+
+### The Free-Tier Architecture & Tech Stack
+
+To ensure the application runs completely free of cost and operates smoothly on standard, non-gaming laptop hardware, the architecture splits processing tasks strategically between highly optimized local memory structures and lightning-fast cloud execution:
+
+```
+[Uploaded PDF] ──> [Local Text Splitting] ──> [Local Embedding Generation] ──> [Local RAM ChromaDB]
+                                                                                      │
+                                                                           (Retrieves Context Match)
+                                                                                      │
+[UI Style Dropdown] + [User Topic Request] ───────────────────────────────────────────▼
+       │
+       ▼
+[System Prompt Compiler] ──> (Stream request over internet) ──> [Groq Cloud Engine] ──> [Streamlit UI Live View]
+
+```
+
+1. **User Interface Framework: Streamlit (`streamlit`)**
+* **Role:** Serves as the complete front-end dashboard engine.
+* **Why it fits:** It compiles Python scripts into reactive web dashboards natively. It features built-in UI components like sidebars, file uploaders, and text streams, avoiding the need for heavy JavaScript frameworks like React.
+
+
+2. **Cloud AI Inference: Groq SDK (`groq`)**
+* **Role:** Connects the platform to cloud hardware running open models like `llama-3.1-8b-instant`.
+* **Why it fits:** It bypasses the laptop's CPU limitations by executing the language model inference remotely on specialized hardware. Groq's developer tier is completely free, requires no financial credit cards to get started, and provides instantaneous response streaming.
+
+
+3. **PDF Document Parser: PyPDF (`pypdf`)**
+* **Role:** Extracts plain structural text strings page-by-page from incoming uploaded user documents.
+* **Why it fits:** It is written entirely in pure Python, has zero dependencies on heavy tools like Java, and consumes minimal system resources during startup.
+
+
+4. **Context Chunky Router: LangChain Text Splitters (`langchain-text-splitters`)**
+* **Role:** Breaks down text blocks recursively using a character-limit window (with custom chunk overlaps).
+* **Why it fits:** It avoids pulling in the entire heavy LangChain ecosystem, keeping the memory requirements low while preventing context fragmentation.
+
+
+5. **Local Vector Embeddings Engine: Sentence-Transformers (`sentence-transformers`)**
+* **Role:** Converts incoming plain text phrases into long numerical arrays (vectors) that capture semantic meaning.
+* **Why it fits:** It runs the `all-MiniLM-L6-v2` model locally on standard laptop CPUs. It is an incredibly small model (around 90MB) that downloads once and requires minimal memory space to process textbook data.
+
+
+6. **In-Memory Vector Datastore: ChromaDB (`chromadb`)**
+* **Role:** Stores document text pieces alongside their respective math vectors, enabling fast similarity searches when a user inputs a topic.
+* **Why it fits:** Configured using an `EphemeralClient`, it builds and queries its structures completely inside the laptop's RAM. It avoids writing temporary files to the hard drive, maintains zero permanent overhead, and clears itself when a new file is uploaded.
+
+
+
+---
+
+### The Development Roadmap
+
+This structural timeline details how the codebase builds from local data processing up to the final user interface.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ PHASE 1: Data Preparation Core (rag_engine.py)         │
+├─────────────────────────────────────────────────────────┤
+│ • Read uploaded document stream cleanly as bytes.       │
+│ • Segment unstructured strings with recursive overlaps. │
+│ • Build local vector mappings using the CPU cache.     │
+│ • Map entries directly to an ephemeral memory store.     │
+└────────────────────────────┬────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────┐
+│ PHASE 2: Persona Matrix Construction (prompt_styles.py) │
+├─────────────────────────────────────────────────────────┤
+│ • Map strict structural system personas (dataclasses).  │
+│ • VTU Exam: Hard academic schemas, verbs, marks.        │
+│ • Silicon Valley: Tactical trade-offs and code errors.   │
+│ • ELI5: Jargon-free real-world narrative analogies.     │
+│ • Cyberpunk: Gamified security terminal interaction.    │
+└────────────────────────────┬────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────┐
+│ PHASE 3: Cloud Pipeline Router (quiz_generator.py)     │
+├─────────────────────────────────────────────────────────┤
+│ • Configure the singleton Groq secure client.           │
+│ • query ChromaDB to pull matching content paragraphs.   │
+│ • Combine metadata structures into a message payload.   │
+│ • Yield output packets chunk-by-chunk using generators. │
+└────────────────────────────┬────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────┐
+│ PHASE 4: Visual Dashboard Stitching (app.py)            │
+├─────────────────────────────────────────────────────────┤
+│ • Inject clean neumorphic visual panels via custom CSS.  │
+│ • Manage persistent browser views using session states. │
+│ • Stream token packets live to assistant interfaces.    │
+└─────────────────────────────────────────────────────────┘
+
+```
+
+#### Phase 1: Local Ingestion Pipeline (`rag_engine.py`)
+
+* Set up a memory-only instance of ChromaDB to isolate the application environment.
+* Write text splitting logic that breaks documents down into manageable segments (e.g., 1000-character blocks with a 200-character overlap) to keep matching paragraphs contextually intact.
+* Download and cache the local embedding model files, ensuring the system can process information offline without requiring additional cloud services.
+
+#### Phase 2: Persona Configuration Matrix (`prompt_styles.py`)
+
+* Create structured templates that separate underlying system instructions from user-provided details.
+* Standardize the four curated behaviors:
+* **VTU Exam Style:** Enforces academic verbs (*"Derive," "Differentiate," "With a neat diagram"*) and formats sub-questions like `1(a)` and `1(b)` with explicit marks like `[7 Marks]`.
+* **Silicon Valley Style:** Changes definitions into "What-if" architectural design scenarios and structural optimization challenges.
+* **ELI5 Style:** Strips away technical jargon, replacing complex formulas with everyday analogies (e.g., comparing database indexes to library tables).
+* **Cyberpunk Style:** Wraps technical questions in a gaming narrative, making correct answers feel like overriding security firewalls.
+
+
+
+#### Phase 3: The Integration Layer (`quiz_generator.py`)
+
+* Implement a secure connection layer to communicate with the free Groq API endpoint.
+* Write a processing function that uses the user's specific topic input to search the vector database and retrieve relevant document excerpts.
+* Build a compiler that combines the matching context blocks, the chosen style template, and the target topic into a structured request payload for the AI model.
+* Use Python generators (`yield`) to stream text responses back token-by-token, keeping the user interface fast and responsive.
+
+#### Phase 4: Frontend Assembly (`app.py` & `assets/style.css`)
+
+* Design a clean, responsive layout featuring a file uploader, interactive style selection menus, and input text fields.
+* Use custom CSS styling to implement a modern neumorphic design interface (including custom card shadows and a toggleable dark/light appearance).
+* Configure Streamlit session states to store uploaded data in background memory, ensuring the app doesn't re-index files during interface updates or style changes.
+
+RUN:
+streamlit run app.py
+http://localhost:8501
