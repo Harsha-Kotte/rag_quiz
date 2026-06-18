@@ -2,23 +2,22 @@
 streamlit==1.35.0
 
 # ── Cloud LLM Inference (Free Tier) ────────────────────────────────────────────
-groq==0.9.0                        # Official Groq Python SDK
+groq>=0.11.0
 
 # ── PDF Parsing ─────────────────────────────────────────────────────────────────
-pypdf==4.2.0                       # Lightweight, no Java dependency
+pypdf==4.2.0
 
 # ── Text Splitting ──────────────────────────────────────────────────────────────
-langchain-text-splitters==0.2.2    # Only the splitter; avoids full langchain bloat
+langchain-text-splitters==0.2.2
 
-# ── Local Embeddings (CPU-safe) ─────────────────────────────────────────────────
-sentence-transformers==3.0.1       # Pulls in torch (CPU build is fine)
-# Torch CPU-only wheel — install separately with:
-#   pip install torch --index-url https://download.pytorch.org/whl/cpu
-# Do NOT list torch here to avoid accidentally pulling the heavy CUDA build.
+# ── Core Machine Learning (Linux Cloud Compiles) ───────────────────────────────
+torch--index-url https://download.pytorch.org/whl/cpu
+torchvision--index-url https://download.pytorch.org/whl/cpu
+sentence-transformers==3.0.1
 
 # ── Vector Store ────────────────────────────────────────────────────────────────
-chromadb==0.5.3                    # In-memory client; no server needed
+chromadb==0.5.3
 
 # ── Utilities ───────────────────────────────────────────────────────────────────
-python-dotenv==1.0.1               # Load GROQ_API_KEY from .env
-numpy==1.26.4                      # Pinned for sentence-transformers compat
+python-dotenv==1.0.1
+numpy>=1.26.4
