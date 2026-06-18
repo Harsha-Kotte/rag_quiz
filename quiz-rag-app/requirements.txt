@@ -10,9 +10,10 @@ pypdf==4.2.0
 # ── Text Splitting ──────────────────────────────────────────────────────────────
 langchain-text-splitters==0.2.2
 
-# ── Core Machine Learning (Linux Cloud Compiles) ───────────────────────────────
-torch--index-url https://download.pytorch.org/whl/cpu
-torchvision--index-url https://download.pytorch.org/whl/cpu
+# ── Core Machine Learning (CPU Cloud Compiles) ─────────────────────────────────
+--index-url https://download.pytorch.org/whl/cpu
+torch
+torchvision
 sentence-transformers==3.0.1
 
 # ── Vector Store ────────────────────────────────────────────────────────────────
